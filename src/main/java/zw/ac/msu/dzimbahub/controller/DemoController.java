@@ -13,7 +13,7 @@ import zw.ac.msu.dzimbahub.repository.DemoRecordRepository;
 import zw.ac.msu.dzimbahub.repository.PropertyRepository;
 
 @RestController 
-@RequestMapping("/api") 
+@RequestMapping("/api/demo") // Changed base path to /api/demo
 public class DemoController {
     private final DemoRecordRepository repo; 
     private final PropertyRepository properties; 
@@ -50,8 +50,7 @@ public class DemoController {
         return save("review",b);
     }
 
-    // FIXED: Changed from /admin/stats to /demo/stats
-    @GetMapping("/demo/stats") 
+    @GetMapping("/stats") 
     public Map<String,Long> stats(){
         return Map.of(
             "properties",properties.count(),

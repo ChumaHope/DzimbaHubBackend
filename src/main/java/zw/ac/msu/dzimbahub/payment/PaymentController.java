@@ -11,8 +11,8 @@ import zw.ac.msu.dzimbahub.model.Property;
 import zw.ac.msu.dzimbahub.repository.PropertyRepository;
 import zw.co.paynow.core.Paynow;
 import zw.co.paynow.core.Payment;
-import zw.co.paynow.core.WebInitResponse;
-import zw.co.paynow.core.StatusResponse;
+import zw.co.paynow.responses.WebInitResponse;
+import zw.co.paynow.responses.StatusResponse;
 import java.time.Instant;
 import java.util.*;
 

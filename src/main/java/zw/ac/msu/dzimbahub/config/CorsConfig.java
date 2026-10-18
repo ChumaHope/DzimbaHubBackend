@@ -1,0 +1,3 @@
+package zw.ac.msu.dzimbahub.config;
+import org.springframework.beans.factory.annotation.Value; import org.springframework.context.annotation.Configuration; import org.springframework.web.servlet.config.annotation.*;
+@Configuration public class CorsConfig implements WebMvcConfigurer { @Value("${app.cors.allowed-origin:http://localhost:3000}") private String allowedOrigin; @Override public void addCorsMappings(CorsRegistry r){r.addMapping("/api/**").allowedOrigins(allowedOrigin.split(",")).allowedMethods("GET","POST","PUT","PATCH","DELETE","OPTIONS").allowedHeaders("Authorization","Content-Type").maxAge(3600);}}

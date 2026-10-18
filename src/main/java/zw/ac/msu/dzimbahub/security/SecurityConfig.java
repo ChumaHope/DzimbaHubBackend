@@ -1,6 +1,5 @@
 package zw.ac.msu.dzimbahub.security;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean; 
 import org.springframework.context.annotation.Configuration; 
 import org.springframework.http.HttpMethod; 
@@ -15,15 +14,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration 
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
-
-    @Value("${app.cors.allowed-origin:http://localhost:3000}")
-    private String allowedOrigin;
 
     public SecurityConfig(JwtAuthenticationFilter f){
         jwtFilter=f;
@@ -38,15 +33,11 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception{
         return http
             .csrf(c->c.disable())
-            // Use our custom CORS configuration
-            .cors(c -> c.configurationSource(corsConfigurationSource())) 
+            .cors(c -> c.configurationSource(corsConfigurationSource())) // Apply CORS here
             .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(a->a
-                // 1. Allow CORS preflight requests
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                
-                // 2. Added /api/auth/register just in case your frontend uses that instead of /signup
-                .requestMatchers("/api/auth/login","/api/auth/signup", "/api/auth/register", "/api/health","/error").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight
+                .requestMatchers("/api/auth/login","/api/auth/signup", "/api/health","/error").permitAll()
                 .requestMatchers("/api/auth/me").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/properties","/api/properties/**","/api/recommendations/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/recommendations").permitAll()
@@ -66,19 +57,18 @@ public class SecurityConfig {
             .build();
     }
 
-    // This Bean is what makes CORS work with Spring Security
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Read from Render environment variable, fallback to localhost
-        configuration.setAllowedOrigins(Arrays.asList(allowedOrigin.split(",")));
+        // HARDCODED your Vercel URL for testing
+        configuration.setAllowedOrigins(Arrays.asList("https://dzimba-hub-frontend.vercel.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-        return source;
+        return source; // IMPORTANT: Return source, not configuration
     }
 }
